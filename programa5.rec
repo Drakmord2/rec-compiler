@@ -1,0 +1,16 @@
+
+global count : Integer := 10;
+
+function isEmpty(num : Integer) return Boolean is
+begin
+	if num > 0 then
+		return False;
+	else
+		return True;
+	end if;
+end checkCount;
+
+procedure Main (arg : Integer) is
+begin
+	show isEmpty(arg);
+end Main;

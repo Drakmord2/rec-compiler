@@ -1,0 +1,18 @@
+
+procedure Main() is
+begin
+	#Programa minimo
+	return;
+end Bool;
+
+function foo () return Boolean is
+x : Integer := 10;
+begin
+ 	#loop infinito
+	while True
+	loop
+		x := x + 1;
+		show x;
+	end loop;
+	return True;
+end foo;

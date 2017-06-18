@@ -1,0 +1,18 @@
+
+function check(x : Integer) return Boolean is
+begin
+	while x < 5
+	loop
+		show x;
+		x := x + 1;
+	end loop;
+	
+	return True;
+end check;
+
+procedure Main() is
+begin
+	if check(5) then
+		return;
+	end if;
+end Main;

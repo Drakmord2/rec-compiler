@@ -1,0 +1,7 @@
+
+global HelloWorld : Boolean := True;
+
+procedure Main() is
+begin
+	show HelloWorld;
+end Main;

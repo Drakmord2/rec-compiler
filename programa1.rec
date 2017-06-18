@@ -1,0 +1,53 @@
+
+# Codigo exemplo da linguagem REC
+
+global x : Integer := 10;
+
+function Not(bool : Boolean) return Boolean is
+a : Integer := 0;
+begin
+	if bool = True then
+		return False;
+	else
+		return True;
+	end if;
+end Not;
+
+procedure A () is
+a : Integer := 0;
+begin
+	#If sem else
+	if a >= 0 then
+		a := a + 1;
+		#IF interno
+		if a < x - 5 then
+			a := a + 1;
+		else
+			return;
+		end if;
+	end if;
+end A;
+
+procedure Main() is
+y : Boolean;
+begin
+	if x = 10 then
+		y := True;
+	else
+		y := False;
+	end if;
+	x := 3;
+	A();
+	
+	while x > 0
+	loop
+		y := Not(y);
+		if y = True then
+			continue;
+		else break;
+		end if;
+	end loop;
+	
+	show y;
+end Main;
+

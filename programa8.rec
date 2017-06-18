@@ -1,0 +1,12 @@
+#sintaticamente valido;
+
+function void() return Boolean is
+begin
+	return; #retorno invalido
+end void;
+
+procedure Main() is
+val : Boolean;
+begin
+	val := void(); #semanticamente invalido;
+end Main;

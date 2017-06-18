@@ -1,0 +1,21 @@
+
+global count : Integer := 0;
+
+procedure Main() is
+begin
+	while True
+	loop
+		while True
+		loop
+			if count > 20 then
+				break;
+			end if;
+			
+			count := count + 1;
+		end loop
+	if count > 30 then
+		break;
+	end if;
+	count := count + 1;
+	end loop;
+end Main;

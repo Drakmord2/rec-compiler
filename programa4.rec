@@ -1,0 +1,16 @@
+
+global x : Boolean := True;
+global y : Boolean := False;
+
+procedure Bool() is
+begin
+	if x = y then
+		return True;
+	else
+		if x /= y then
+			return False;
+		end if;
+	end if;
+	
+	return;
+end Main;

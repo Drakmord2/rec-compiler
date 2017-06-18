@@ -1,0 +1,30 @@
+
+global pos : Integer := 0; #posicao default
+
+# 0 1 1 2 3 5 8 13 21 34 ...
+procedure fibonacci(pos : Integer) is
+begin
+	if pos = 0 then
+		return 0;
+	else 
+		if pos = 1 then
+			return 1;
+		else
+			if pos = 2 then
+				return 1;
+			else
+				return fibonacci(pos);
+			end if;
+		end if;
+	end if;
+end fibonacci;
+
+procedure Main (arg : Integer) is
+begin
+	if arg < 0 then
+		fibonacci(pos);
+	else
+		pos := arg;
+		fibonacci(pos);
+	end if;
+end Main;
