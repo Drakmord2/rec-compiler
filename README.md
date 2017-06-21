@@ -41,13 +41,15 @@ Right now lexical, syntatic, and semantic analysis are performed. Code generatio
 While an executable is not available, build the project
 
 ```bash
-$> javac -d /ProjectPath/Compilador/bin -cp /ProjectPath/Compilador/src /ProjectPath/Compilador/src/compiler/Compiler.java
+$> cd /Path/To/Project/root/
+
+$> javac -d Compilador/bin -cp Compilador/src Compilador/src/compiler/Compiler.java
 ```
 
 Then create an alias for the compiler with
 
 ```bash
-$> alias compile="java -cp /ProjectPath/Compilador/bin compiler.Compiler"
+$> alias compile="java -cp Compilador/bin compiler.Compiler"
 ```
 
 Now you can compile your REC programs from the command line using
