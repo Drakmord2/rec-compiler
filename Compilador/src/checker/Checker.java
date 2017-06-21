@@ -76,7 +76,8 @@ public final class Checker implements Visitor {
 		if (! id1.equals(id2)) {
 			throw new SemanticException("Fechamento incorreto do Procedimento [ "+id1+" ]");
 		}
-		
+
+		this.idTable.enter(proc.I1.spelling, proc.I1);
 		proc.I1.visit(this, null);
 
 		this.idTable.openScope();
@@ -98,7 +99,6 @@ public final class Checker implements Visitor {
 		this.idTable.closeScope();
 		
 		proc.I1.tipo = Type.empty;
-		this.idTable.enter(proc.I1.spelling, proc.I1);
 		
 		return null;
 	}
@@ -111,7 +111,8 @@ public final class Checker implements Visitor {
 		if (! id1.equals(id2)) {
 			throw new SemanticException("Fechamento incorreto da Função [ "+id1+" ]");
 		}
-		
+
+		this.idTable.enter(func.I1.spelling, func.I1);
 		func.I1.visit(this, null);
 
 		this.idTable.openScope();
@@ -135,7 +136,6 @@ public final class Checker implements Visitor {
 		this.idTable.closeScope();
 
 		func.I1.tipo = tipo;
-		this.idTable.enter(func.I1.spelling, func.I1);
 		
 		return null;
 	}
@@ -429,8 +429,13 @@ public final class Checker implements Visitor {
 	}
 
 	@Override
-	public Object visitID(ID id, Object arg) {
+	public Object visitID(ID id, Object arg) throws SemanticException {
 		id.decl = this.idTable.retrieve(id.spelling);
+		
+		if (id.decl == null) {
+			throw new SemanticException("Identificador não declarado. [ "+id.spelling+" ]");
+		}
+		
 		return id.decl;
 	}
 

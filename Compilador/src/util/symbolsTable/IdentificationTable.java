@@ -89,13 +89,6 @@ public class IdentificationTable {
 	public void enter(String id, AST node) throws SemanticException {
 		boolean hasFound = false;
 		// Verifies if in the current scope already exists an identifier with the same spelling
-//		for (int i=this.currentScope; i>=0; i--) {
-//			Key key = new Key(i, id);
-//			if ( this.table.containsKey(key) ) {
-//				hasFound = true;
-//				break;
-//			}
-//		}
 		Key key = new Key(this.currentScope, id);
 		if ( this.table.containsKey(key) ) {
 			hasFound = true;
@@ -104,7 +97,6 @@ public class IdentificationTable {
 		// If does not exist
 		if ( hasFound == false ) {
 			// Adds the new entry
-//			Key key = new Key(this.currentScope, id);
 			this.table.put(key, new Attribute(node));
 		// If exists
 		} else {
