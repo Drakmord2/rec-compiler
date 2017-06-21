@@ -10,7 +10,7 @@ global num : Integer := 8;
 
 function fibonacci(pos : Integer) return Integer is
 begin
-    if pos = 0 then
+    if pos <= 0 then
         return 0;
     end if;
     
@@ -38,10 +38,18 @@ Right now lexical, syntatic, and semantic analysis are performed. Code generatio
  
 ## How to use
 
-From the command line you can create an alias like:
+While an executable is not available, build the project
+
 ```bash
-$> alias compile="java -cp /PathToProject/Compilador/bin compiler.Compiler "
+$> javac -d /ProjectPath/Compilador/bin -cp /ProjectPath/Compilador/src /ProjectPath/Compilador/src/compiler/Compiler.java
 ```
+
+Then create an alias for the compiler with
+
+```bash
+$> alias compile="java -cp /ProjectPath/Compilador/bin compiler.Compiler"
+```
+
 Now you can compile your REC programs from the command line using
 
 ```bash

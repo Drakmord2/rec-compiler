@@ -66,16 +66,16 @@ public final class Checker implements Visitor {
 			cmd.visit(this, null);
 			
 			if (cmd instanceof Procedure) {
-				ID id = ((Procedure) cmd).I1;
+				String id = ((Procedure) cmd).I1.spelling;
 				
-				if (id.spelling.equals("Main")) {
+				if (id.equals("Main")) {
 					entry = true;
 				}
 			}
 		}
 		
 		if (! entry) {
-			throw new SemanticException("Programa sem procedimento [ Main ].");
+			throw new SemanticException("Programa não possui procedimento [ Main ].");
 		}
 
 		return null;
