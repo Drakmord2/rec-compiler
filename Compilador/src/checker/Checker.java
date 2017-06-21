@@ -107,6 +107,8 @@ public final class Checker implements Visitor {
 		
 		for (Comando cmd: proc.C) {
 			cmd.visit(this, null);
+			
+			this.unconditional(cmd);
 		}
 		
 		proc.I2.visit(this, null);
@@ -142,6 +144,8 @@ public final class Checker implements Visitor {
 		
 		for (Comando cmd: func.C) {
 			cmd.visit(this, null);
+			
+			this.unconditional(cmd);
 		}
 		
 		func.I2.visit(this, null);
@@ -164,10 +168,14 @@ public final class Checker implements Visitor {
 		
 		for (Comando cmd1 : cmdIf.C1) {
 			cmd1.visit(this, null);
+			
+			this.unconditional(cmd1);
 		}
 		
 		for (Comando cmd2 : cmdIf.C2) {
 			cmd2.visit(this, null);
+			
+			this.unconditional(cmd2);
 		}
 		
 		return null;
@@ -513,6 +521,12 @@ public final class Checker implements Visitor {
 		opLog.decl = (Expressao) this.idTable.retrieve(opLog.spelling);
 		
 		return opLog.decl;
+	}
+	
+	private void unconditional(Comando cmd) throws SemanticException {
+		if (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) {
+			throw new SemanticException("Uso inválido de [ break ] ou [ continue ].");
+		}
 	}
 	
 }
