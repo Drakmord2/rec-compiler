@@ -35,7 +35,7 @@ public class LexicalException extends Exception {
 	 */	
 	public String toString() {
 		String errorMessage =
-			"----------------------------- LEXICAL ERROR REPORT - BEGIN -----------------------------\n" +
+			"\n----------------------------- LEXICAL ERROR REPORT - BEGIN -----------------------------\n" +
 			">> Message: " + super.getMessage() + "\n" +
 			">> Character: " + this.c + "\n" +
 			"   at line: " + (this.line+1) + "\n" +

@@ -32,7 +32,7 @@ public class SyntacticException extends Exception {
 	 */
 	public String toString() {
 		String errorMessage =
-			"----------------------------- SYNTACTIC ERROR REPORT - BEGIN -----------------------------\n" +
+			"\n----------------------------- SYNTACTIC ERROR REPORT - BEGIN -----------------------------\n" +
 			">> Message: " + super.getMessage() + "\n" +
 			">> Token: " + this.token.toString() + "\n" +
 			"   at line: " + (this.token.getLine()+1) + "\n" +
