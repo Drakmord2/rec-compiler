@@ -61,8 +61,21 @@ public final class Checker implements Visitor {
 			dec.visit(this, null);
 		}
 		
+		boolean entry = false;
 		for (CmdPrimario cmd : prog.C) {
 			cmd.visit(this, null);
+			
+			if (cmd instanceof Procedure) {
+				ID id = ((Procedure) cmd).I1;
+				
+				if (id.spelling.equals("Main")) {
+					entry = true;
+				}
+			}
+		}
+		
+		if (! entry) {
+			throw new SemanticException("Programa sem procedimento [ Main ].");
 		}
 
 		return null;
