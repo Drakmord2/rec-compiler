@@ -223,7 +223,8 @@ public final class Checker implements Visitor {
 	public Object visitParametro(Parametro param, Object arg) throws SemanticException {
 		Type tipo = (Type) param.T.visit(this, null);
 		
-		param.I.tipo = tipo;
+		param.I.tipo 	 = tipo;
+		param.I.variavel = true;
 		this.idTable.enter(param.I.spelling, param.I);
 		
 		if (param.P != null) {
@@ -235,7 +236,7 @@ public final class Checker implements Visitor {
 
 	@Override
 	public Object visitDecVar(DecVar decVar, Object arg) throws SemanticException {
-		Type tipo 	= (Type) decVar.T.visit(this, null);
+		Type tipo = (Type) decVar.T.visit(this, null);
 		
 		if (decVar.A != null) {
 			Type tipoAt = (Type) decVar.A.visit(this, null);
@@ -247,11 +248,13 @@ public final class Checker implements Visitor {
 			}
 		}
 		
-		decVar.I1.tipo = tipo;
+		decVar.I1.tipo 		= tipo;
+		decVar.I1.variavel  = true;
 		this.idTable.enter(decVar.I1.spelling, decVar.I1);
 		
 		for (ID id : decVar.I) {
-			id.tipo = tipo;
+			id.tipo 	= tipo;
+			id.variavel = true;
 			this.idTable.enter(id.spelling, id);
 		}
 		
@@ -282,6 +285,10 @@ public final class Checker implements Visitor {
 				String var 		= id != null ? id.spelling : "";
 				String tipoStr 	= tipo != null ? tipo.toString() : "";
 				throw new SemanticException("Atribuição com tipo incompatíveis. Var: "+var+" | Tipo: "+tipoStr);
+			}
+			
+			if (! id.variavel) {
+				throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
 			}
 		}
 		
@@ -413,6 +420,10 @@ public final class Checker implements Visitor {
 			if (tipo != tipo2) {
 				throw new SemanticException("Atribuição com tipo incompatíveis. Var: "+id.spelling+" | Tipo: "+tipo.toString());
 			}
+		}
+		
+		if (! id.variavel) {
+			throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
 		}
 		
 		return tipo;
