@@ -1,5 +1,6 @@
 package util.AST;
 
+import checker.SemanticException;
 import checker.Type;
 import checker.Visitor;
 
@@ -24,7 +25,7 @@ public class ID extends Terminal {
 	}
 
 	@Override
-	public Object visit (Visitor v, Object arg) {
+	public Object visit (Visitor v, Object arg) throws SemanticException {
 		return v.visitID(this, arg);
 	}
 	

@@ -61,8 +61,21 @@ public final class Checker implements Visitor {
 			dec.visit(this, null);
 		}
 		
+		boolean entry = false;
 		for (CmdPrimario cmd : prog.C) {
 			cmd.visit(this, null);
+			
+			if (cmd instanceof Procedure) {
+				String id = ((Procedure) cmd).I1.spelling;
+				
+				if (id.equals("Main")) {
+					entry = true;
+				}
+			}
+		}
+		
+		if (! entry) {
+			throw new SemanticException("Programa não possui procedimento [ Main ].");
 		}
 
 		return null;
@@ -77,6 +90,9 @@ public final class Checker implements Visitor {
 			throw new SemanticException("Fechamento incorreto do Procedimento [ "+id1+" ]");
 		}
 		
+		this.idTable.enter(proc.I1.spelling, proc.I1);
+		
+		proc.I1.tipo = Type.empty;
 		proc.I1.visit(this, null);
 
 		this.idTable.openScope();
@@ -97,9 +113,6 @@ public final class Checker implements Visitor {
 		
 		this.idTable.closeScope();
 		
-		proc.I1.tipo = Type.empty;
-		this.idTable.enter(proc.I1.spelling, proc.I1);
-		
 		return null;
 	}
 
@@ -111,7 +124,8 @@ public final class Checker implements Visitor {
 		if (! id1.equals(id2)) {
 			throw new SemanticException("Fechamento incorreto da Função [ "+id1+" ]");
 		}
-		
+
+		this.idTable.enter(func.I1.spelling, func.I1);
 		func.I1.visit(this, null);
 
 		this.idTable.openScope();
@@ -135,7 +149,6 @@ public final class Checker implements Visitor {
 		this.idTable.closeScope();
 
 		func.I1.tipo = tipo;
-		this.idTable.enter(func.I1.spelling, func.I1);
 		
 		return null;
 	}
@@ -306,7 +319,11 @@ public final class Checker implements Visitor {
 			String tipo2 = tipoExp2.toString();
 			
 			if (! tipo1.equals(tipo2)) {
-				throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipoExp.toString()+" ] - [ "+tipoExp2.toString()+" ]");
+				throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipo1+" ] - [ "+tipo2+" ]");
+			}
+			
+			if (! exp.O.spelling.equals("=") && ! exp.O.spelling.equals("/=") && ( ! tipoExp.equals(Type.integer) || ! tipoExp2.equals(Type.integer)) ) {
+				throw new SemanticException("Tipos de operandos incompatíveis para operador [ "+exp.O.spelling+" ]");
 			}
 			
 			tipoExp = Type.bool;
@@ -319,19 +336,19 @@ public final class Checker implements Visitor {
 	@Override
 	public Object visitExpressaoArit(ExpressaoArit expArit, Object arg) throws SemanticException {
 		Type tipoExp = (Type) expArit.T1.visit(this, null);
+		String tipo1 = tipoExp.toString();
 		
 		if (expArit.T2 != null) {
-			
 			int size = expArit.T2.size();
+			
 			for (int i = 0; i < size; i++) {
 				expArit.O.get(i).visit(this, null);
+				
 				Type tipoExp2 = (Type) expArit.T2.get(i).visit(this, null);
+				String tipo2  = tipoExp2.toString();
 				
-				String tipo1 = tipoExp.toString();
-				String tipo2 = tipoExp2.toString();
-				
-				if (! tipo1.equals(tipo2)) {
-					throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipoExp.toString()+" ] - [ "+tipoExp2.toString()+" ]");
+				if (! tipo1.equals(tipo2) && (tipoExp.equals(Type.bool) || tipoExp2.equals(Type.bool)) ) {
+					throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipo1+" ] - [ "+tipo2+" ]");
 				}
 			}
 		}
@@ -343,15 +360,19 @@ public final class Checker implements Visitor {
 	@Override
 	public Object visitTermo(Termo termo, Object arg) throws SemanticException {
 		Type tipoTermo = (Type) termo.F1.visit(this, null);
+		String tipo1   = tipoTermo.toString();
 		
 		if (termo.F2 != null) {
 			int size = termo.F2.size();
+			
 			for (int i = 0; i < size; i++) {
 				termo.O.get(i).visit(this, null);
-				Type tipoTermo2 = (Type) termo.F2.get(i).visit(this, null);
 				
-				if (! tipoTermo.equals(Type.integer) || ! tipoTermo2.equals(Type.integer)) {
-					throw new SemanticException("Tipos de operandos incompatíveis.");
+				Type tipoTermo2 = (Type) termo.F2.get(i).visit(this, null);
+				String tipo2    = tipoTermo2.toString();
+				
+				if (! tipo1.equals(tipo2) && (tipoTermo.equals(Type.bool) || tipoTermo2.equals(Type.bool)) ) {
+					throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipo1+" ] - [ "+tipo2+" ]");
 				}
 			}
 		}
@@ -429,8 +450,13 @@ public final class Checker implements Visitor {
 	}
 
 	@Override
-	public Object visitID(ID id, Object arg) {
+	public Object visitID(ID id, Object arg) throws SemanticException {
 		id.decl = this.idTable.retrieve(id.spelling);
+		
+		if (id.decl == null) {
+			throw new SemanticException("Identificador não declarado. [ "+id.spelling+" ]");
+		}
+		
 		return id.decl;
 	}
 

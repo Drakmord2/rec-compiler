@@ -24,7 +24,7 @@ public class SemanticException extends Exception {
 	 */
 	public String toString() {
 		String errorMessage =
-			"----------------------------- SEMANTIC ERROR REPORT - BEGIN -----------------------------\n\n" +
+			"\n----------------------------- SEMANTIC ERROR REPORT - BEGIN -----------------------------\n\n" +
 			">> Message: " + super.getMessage() + "\n\n" +
 			"------------------------------ SEMANTIC ERROR REPORT - END ------------------------------\n";
 			

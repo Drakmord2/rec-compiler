@@ -90,7 +90,7 @@ public interface Visitor {
 	public Object visitTipoLiteral	(TipoLiteral tipoLit, Object arg);
 	
 	//Terminais
-	public Object visitID 		(ID id, Object arg);
+	public Object visitID 		(ID id, Object arg) throws SemanticException;
 	public Object visitBool 	(Bool bool, Object arg);
 	public Object visitNumero 	(Numero numero, Object arg);
 	public Object visitBreak 	(Break brk, Object arg);
