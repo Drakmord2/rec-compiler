@@ -105,8 +105,19 @@ public final class Checker implements Visitor {
 			dec.visit(this, null);
 		}
 		
+		boolean retorno = false;
 		for (Comando cmd: proc.C) {
 			cmd.visit(this, null);
+			
+			this.unconditional(cmd);
+			
+			if ( this.checkReturn(cmd, Type.empty) ) {
+				retorno = true;
+			}
+		}
+		
+		if (! retorno) {
+			throw new SemanticException("Procedimento [ "+id1+" ] não possui comando [ return ]");
 		}
 		
 		proc.I2.visit(this, null);
@@ -140,8 +151,19 @@ public final class Checker implements Visitor {
 			dec.visit(this, null);
 		}
 		
+		boolean retorno = false;
 		for (Comando cmd: func.C) {
 			cmd.visit(this, null);
+			
+			this.unconditional(cmd);
+			
+			if ( this.checkReturn(cmd, tipo) ) {
+				retorno = true;
+			}
+		}
+		
+		if (! retorno) {
+			throw new SemanticException("Função [ "+id1+" ] não possui comando [ return ]");
 		}
 		
 		func.I2.visit(this, null);
@@ -164,10 +186,14 @@ public final class Checker implements Visitor {
 		
 		for (Comando cmd1 : cmdIf.C1) {
 			cmd1.visit(this, null);
+			
+			this.unconditional(cmd1);
 		}
 		
 		for (Comando cmd2 : cmdIf.C2) {
 			cmd2.visit(this, null);
+			
+			this.unconditional(cmd2);
 		}
 		
 		return null;
@@ -223,7 +249,8 @@ public final class Checker implements Visitor {
 	public Object visitParametro(Parametro param, Object arg) throws SemanticException {
 		Type tipo = (Type) param.T.visit(this, null);
 		
-		param.I.tipo = tipo;
+		param.I.tipo 	 = tipo;
+		param.I.variavel = true;
 		this.idTable.enter(param.I.spelling, param.I);
 		
 		if (param.P != null) {
@@ -235,7 +262,7 @@ public final class Checker implements Visitor {
 
 	@Override
 	public Object visitDecVar(DecVar decVar, Object arg) throws SemanticException {
-		Type tipo 	= (Type) decVar.T.visit(this, null);
+		Type tipo = (Type) decVar.T.visit(this, null);
 		
 		if (decVar.A != null) {
 			Type tipoAt = (Type) decVar.A.visit(this, null);
@@ -247,11 +274,13 @@ public final class Checker implements Visitor {
 			}
 		}
 		
-		decVar.I1.tipo = tipo;
+		decVar.I1.tipo 		= tipo;
+		decVar.I1.variavel  = true;
 		this.idTable.enter(decVar.I1.spelling, decVar.I1);
 		
 		for (ID id : decVar.I) {
-			id.tipo = tipo;
+			id.tipo 	= tipo;
+			id.variavel = true;
 			this.idTable.enter(id.spelling, id);
 		}
 		
@@ -282,6 +311,10 @@ public final class Checker implements Visitor {
 				String var 		= id != null ? id.spelling : "";
 				String tipoStr 	= tipo != null ? tipo.toString() : "";
 				throw new SemanticException("Atribuição com tipo incompatíveis. Var: "+var+" | Tipo: "+tipoStr);
+			}
+			
+			if (! id.variavel) {
+				throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
 			}
 		}
 		
@@ -415,6 +448,10 @@ public final class Checker implements Visitor {
 			}
 		}
 		
+		if (! id.variavel) {
+			throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
+		}
+		
 		return tipo;
 	}
 
@@ -502,6 +539,28 @@ public final class Checker implements Visitor {
 		opLog.decl = (Expressao) this.idTable.retrieve(opLog.spelling);
 		
 		return opLog.decl;
+	}
+	
+	private void unconditional(Comando cmd) throws SemanticException {
+		if (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) {
+			throw new SemanticException("Uso inválido de [ break ] ou [ continue ].");
+		}
+	}
+	
+	private boolean checkReturn(Comando cmd, Type tipo) throws SemanticException {
+		if (cmd instanceof ComandoReturn) {
+			Expressao exp = ((ComandoReturn) cmd).E;
+			
+			if (exp != null) {
+				if ( exp.tipo != tipo ) {
+					throw new SemanticException("Tipo de retorno incompatível. "
+							+ "Experado: [ "+tipo.toString()+" ] | Verificado: [ "+exp.tipo.toString()+" ]");
+				}
+			}
+			
+			return true;
+		}
+		return false;
 	}
 	
 }
