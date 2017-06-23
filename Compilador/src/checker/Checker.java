@@ -146,6 +146,7 @@ public final class Checker implements Visitor {
 			cmd.visit(this, null);
 			
 			this.unconditional(cmd);
+			this.checkReturn(cmd, tipo);
 		}
 		
 		func.I2.visit(this, null);
@@ -527,6 +528,18 @@ public final class Checker implements Visitor {
 		if (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) {
 			throw new SemanticException("Uso inválido de [ break ] ou [ continue ].");
 		}
+	}
+	
+	private boolean checkReturn(Comando cmd, Type tipo) throws SemanticException {
+		if (cmd instanceof ComandoReturn) {
+			
+			if ( ((ComandoReturn) cmd).E.tipo != tipo ) {
+				throw new SemanticException("Retorno inválido");
+			}
+			
+			return true;
+		}
+		return false;
 	}
 	
 }
