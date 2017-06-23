@@ -25,7 +25,7 @@ public class Compiler {
 		String location = Compiler.validateInput(args);
 		String[] file 	= location.split("/");
 		
-		System.out.println("\nREC Compiler\nVersão 1.0 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
+		System.out.println("\nREC Compiler\nVersão 0.8 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
 		System.out.println("\nCompilando código-fonte [ " + file[file.length-1] + " ]\n");
 		System.out.println("----------------------------------------------------------");
 		
@@ -48,8 +48,6 @@ public class Compiler {
 				System.out.println("\n\t-- AST Decorada --\n");
 				System.out.println( astRoot.toString(0));
 				System.out.println("----------------------------------------------------------\n");
-				
-				System.out.println("\t-- Geração de código --\n");
 			}
 			
 		} catch (LexicalException e) {

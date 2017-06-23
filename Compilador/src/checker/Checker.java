@@ -81,6 +81,7 @@ public final class Checker implements Visitor {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object visitProcedure(Procedure proc, Object arg) throws SemanticException {
 		String id1 = proc.I1.spelling;
@@ -98,7 +99,10 @@ public final class Checker implements Visitor {
 		this.idTable.openScope();
 
 		if (proc.P != null) {
-			proc.P.visit(this, null);
+			ArrayList<Type> tipoParams;
+			tipoParams = (ArrayList<Type>) proc.P.visit(this, null);
+			
+			proc.tipoParams = tipoParams;
 		}
 		
 		for (DecVar dec : proc.D) {
@@ -127,6 +131,7 @@ public final class Checker implements Visitor {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object visitFunction(Function func, Object arg) throws SemanticException {
 		String id1 = func.I1.spelling;
@@ -142,7 +147,10 @@ public final class Checker implements Visitor {
 		this.idTable.openScope();
 
 		if (func.P != null) {
-			func.P.visit(this, null);
+			ArrayList<Type> tipoParams;
+			tipoParams = (ArrayList<Type>) func.P.visit(this, null);
+			
+			func.tipoParams = tipoParams;
 		}
 		
 		Type tipo = (Type) func.T.visit(this, null);
@@ -245,19 +253,25 @@ public final class Checker implements Visitor {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object visitParametro(Parametro param, Object arg) throws SemanticException {
-		Type tipo = (Type) param.T.visit(this, null);
+		ArrayList<Type> tipos 	= new ArrayList<>();
+		Type tipo 				= (Type) param.T.visit(this, null);
 		
 		param.I.tipo 	 = tipo;
 		param.I.variavel = true;
 		this.idTable.enter(param.I.spelling, param.I);
 		
+		tipos.add(tipo);
 		if (param.P != null) {
-			param.P.visit(this, null);
+			ArrayList<Type> t;
+			t = (ArrayList<Type>) param.P.visit(this, null);
+			
+			tipos.addAll(t);
 		}
 		
-		return null;
+		return tipos;
 	}
 
 	@Override
@@ -294,6 +308,7 @@ public final class Checker implements Visitor {
 		return tipo;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object visitChamada(Chamada chamada, Object arg) throws SemanticException {
 		ID id 			= (ID) chamada.I.visit(this, null);
@@ -301,7 +316,10 @@ public final class Checker implements Visitor {
 		Type tipo		= (Type) chamada.I.tipo;
 		
 		if (chamada.A != null) {
-			chamada.A.visit(this, null);
+			ArrayList<Type> tipoArgs;
+			tipoArgs = (ArrayList<Type>) chamada.A.visit(this, null);
+			
+			
 		}
 		
 		if (chamada.At != null) {
@@ -323,9 +341,10 @@ public final class Checker implements Visitor {
 
 	@Override
 	public Object visitArgumento(Argumento argumento, Object arg) throws SemanticException {
+		ArrayList<Type> tipos 	= new ArrayList<>();
+		
 		if (argumento.E != null) {
-			ArrayList<Type> tipos 	= new ArrayList<>();
-			Type tipo 				= (Type) argumento.E.visit(this, null);
+			Type tipo = (Type) argumento.E.visit(this, null);
 			
 			tipos.add(tipo);
 			
@@ -337,7 +356,8 @@ public final class Checker implements Visitor {
 			return tipos;
 		}
 		
-		return Type.empty;
+		tipos.add(Type.empty);
+		return tipos;
 	}
 
 	@Override
@@ -430,6 +450,7 @@ public final class Checker implements Visitor {
 		return tipo;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object visitFatorChamada(FatorChamada fatorChm, Object arg) throws SemanticException {
 		ID id 			= (ID) fatorChm.I.visit(this, null);
@@ -437,7 +458,8 @@ public final class Checker implements Visitor {
 		Type tipo		= (Type) fatorChm.I.tipo;
 		
 		if (fatorChm.A != null) {
-			fatorChm.A.visit(this, null);
+			ArrayList<Type> tipoArgs;
+			tipoArgs = (ArrayList<Type>) fatorChm.A.visit(this, null);
 		}
 		
 		if (fatorChm.At != null) {
@@ -446,10 +468,10 @@ public final class Checker implements Visitor {
 			if (tipo != tipo2) {
 				throw new SemanticException("Atribuição com tipo incompatíveis. Var: "+id.spelling+" | Tipo: "+tipo.toString());
 			}
-		}
-		
-		if (! id.variavel) {
-			throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
+			
+			if (! id.variavel) {
+				throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
+			}
 		}
 		
 		return tipo;
@@ -552,7 +574,7 @@ public final class Checker implements Visitor {
 			Expressao exp = ((ComandoReturn) cmd).E;
 			
 			if (exp != null) {
-				if ( exp.tipo != tipo ) {
+				if ( ! exp.tipo.equals(tipo) ) {
 					throw new SemanticException("Tipo de retorno incompatível. "
 							+ "Experado: [ "+tipo.toString()+" ] | Verificado: [ "+exp.tipo.toString()+" ]");
 				}

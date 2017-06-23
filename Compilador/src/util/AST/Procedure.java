@@ -3,12 +3,14 @@ package util.AST;
 import java.util.ArrayList;
 
 import checker.SemanticException;
+import checker.Type;
 import checker.Visitor;
 
 public class Procedure extends CmdPrimario {
 
 	public ID I1;
 	public Parametro P;
+	public ArrayList<Type> tipoParams;
 	public ArrayList<DecVar> D;
 	public ArrayList<Comando> C;
 	public ID I2;
