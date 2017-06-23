@@ -553,7 +553,8 @@ public final class Checker implements Visitor {
 			
 			if (exp != null) {
 				if ( exp.tipo != tipo ) {
-					throw new SemanticException("Tipo de retorno incompatível.");
+					throw new SemanticException("Tipo de retorno incompatível. "
+							+ "Experado: [ "+tipo.toString()+" ] | Verificado: [ "+exp.tipo.toString()+" ]");
 				}
 			}
 			
