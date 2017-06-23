@@ -105,10 +105,19 @@ public final class Checker implements Visitor {
 			dec.visit(this, null);
 		}
 		
+		boolean retorno = false;
 		for (Comando cmd: proc.C) {
 			cmd.visit(this, null);
 			
 			this.unconditional(cmd);
+			
+			if ( this.checkReturn(cmd, Type.empty) ) {
+				retorno = true;
+			}
+		}
+		
+		if (! retorno) {
+			throw new SemanticException("Procedimento [ "+id1+" ] não possui comando [ return ]");
 		}
 		
 		proc.I2.visit(this, null);
@@ -142,11 +151,19 @@ public final class Checker implements Visitor {
 			dec.visit(this, null);
 		}
 		
+		boolean retorno = false;
 		for (Comando cmd: func.C) {
 			cmd.visit(this, null);
 			
 			this.unconditional(cmd);
-			this.checkReturn(cmd, tipo);
+			
+			if ( this.checkReturn(cmd, tipo) ) {
+				retorno = true;
+			}
+		}
+		
+		if (! retorno) {
+			throw new SemanticException("Função [ "+id1+" ] não possui comando [ return ]");
 		}
 		
 		func.I2.visit(this, null);
@@ -532,9 +549,12 @@ public final class Checker implements Visitor {
 	
 	private boolean checkReturn(Comando cmd, Type tipo) throws SemanticException {
 		if (cmd instanceof ComandoReturn) {
+			Expressao exp = ((ComandoReturn) cmd).E;
 			
-			if ( ((ComandoReturn) cmd).E.tipo != tipo ) {
-				throw new SemanticException("Retorno inválido");
+			if (exp != null) {
+				if ( exp.tipo != tipo ) {
+					throw new SemanticException("Tipo de retorno incompatível.");
+				}
 			}
 			
 			return true;
