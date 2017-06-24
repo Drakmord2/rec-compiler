@@ -1,7 +1,8 @@
 
 global HelloWorld : Boolean := True;
 
-procedure Main() is
+procedure Main(x : Integer, y : Boolean) is
 begin
 	show HelloWorld;
+	return;
 end Main;

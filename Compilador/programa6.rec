@@ -2,7 +2,7 @@
 global pos : Integer := 0; #posicao default
 
 # 0 1 1 2 3 5 8 13 21 34 ...
-procedure fibonacci(pos : Integer) is
+function fibonacci(pos : Integer) return Integer is
 begin
 	if pos = 0 then
 		return 0;
@@ -27,4 +27,5 @@ begin
 		pos := arg;
 		fibonacci(pos);
 	end if;
+	return;
 end Main;
