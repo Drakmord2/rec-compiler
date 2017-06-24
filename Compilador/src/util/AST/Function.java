@@ -43,8 +43,6 @@ public class Function extends CmdPrimario {
 			str += comando.toString(level+1);
 		}
 		
-		str += I2.toString(level+1);
-		
 		return str;
 	}
 

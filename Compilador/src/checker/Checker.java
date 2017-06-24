@@ -46,7 +46,7 @@ public final class Checker implements Visitor {
 	public IdentificationTable idTable 	= null;
 	public boolean hasReturn 			= false;
 	public Type returnType 				= null;
-	public boolean whileScope 			= false;
+	public int whileScope 				= 0;
 	
 	public Checker() {
 		this.idTable = new IdentificationTable();
@@ -219,7 +219,7 @@ public final class Checker implements Visitor {
 			throw new SemanticException("Expressão não booleana em comando WHILE.");
 		}
 		
-		this.whileScope = true;
+		this.whileScope++;
 		
 		for (Comando cmd : cmdWhile.C) {
 			cmd.visit(this, null);
@@ -227,7 +227,7 @@ public final class Checker implements Visitor {
 			this.checkReturn(cmd);
 		}
 		
-		this.whileScope = false;
+		this.whileScope--;
 		return null;
 	}
 
@@ -327,6 +327,7 @@ public final class Checker implements Visitor {
 		
 		if (chamada.A != null) {
 			ArrayList<Type> tipoArgs;
+			
 			tipoArgs = (ArrayList<Type>) chamada.A.visit(this, null);
 			
 			this.checkArgumento(id, tipoArgs);
@@ -587,7 +588,7 @@ public final class Checker implements Visitor {
 	}
 	
 	private void unconditional(Comando cmd) throws SemanticException {
-		if ( (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) && this.whileScope == false) {
+		if ( (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) && this.whileScope == 0) {
 			throw new SemanticException("Uso inválido de [ break ] ou [ continue ].");
 		}
 	}
@@ -627,6 +628,11 @@ public final class Checker implements Visitor {
 	private void checkArgumento(ID id, ArrayList<Type> tipoArgs) throws SemanticException {
 		ArrayList<Type> tipoParams = new ArrayList<>();
 		String nome = "";
+		
+		if (id.variavel) {
+			throw new SemanticException("Variável [ "+id.spelling+" ] não pode ser "
+					+ "chamada como [ procedimento ] ou [ função ].");
+		}
 		
 		if (id.decl instanceof Procedure) {
 			Procedure proc 	= ((Procedure) id.decl);

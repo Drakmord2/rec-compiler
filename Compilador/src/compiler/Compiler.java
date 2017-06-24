@@ -47,15 +47,15 @@ public class Compiler {
 				System.out.println("-----------------------------------------------------------------------------------------");
 				System.out.println("\n\t-- AST Decorada --\n");
 				System.out.println( astRoot.toString(0));
-				System.out.println("-----------------------------------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------------------------------\n");
 			}
 			
 		} catch (LexicalException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} catch (SyntacticException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} catch (SemanticException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		}
 	}
 	

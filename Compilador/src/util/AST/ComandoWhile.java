@@ -19,7 +19,7 @@ public class ComandoWhile extends Comando{
 	public String toString(int level) {
 		String str = this.getSpaces(level);
 		
-		str += "Comando\n";
+		str += "Comando-while\n";
 		str += E.toString(level+1);
 		
 		for (Comando comando : C) {
