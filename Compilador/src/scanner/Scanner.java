@@ -291,7 +291,7 @@ public class Scanner {
 				return GrammarSymbols.LP;
 				
 			case 15:
-				throw new LexicalException("Lexical Error - Unexpected token: ", this.currentChar, this.line, this.column);
+				throw new LexicalException("Caractere inexperado.", this.currentChar, this.line, this.column);
 			
 			case 16:
 				if (! this.isDigit(this.currentChar)) {

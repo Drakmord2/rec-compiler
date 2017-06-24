@@ -30,7 +30,7 @@ public class Function extends CmdPrimario {
 	public String toString(int level) {
 		String str = this.getSpaces(level);
 		
-		str += "Cdm-primario\n";
+		str += "Cdm-primario-function\n";
 		str += I1.toString(level+1);
 		str += P != null ? P.toString(level+1) : "";
 		str += T.toString(level+1);
