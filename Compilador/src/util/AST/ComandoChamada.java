@@ -14,7 +14,7 @@ public class ComandoChamada extends Comando {
 	public String toString(int level) {
 		String str = this.getSpaces(level);
 		
-		str += "Comando\n";
+		str += "Comando-chamada\n";
 		str += C.toString(level+1);
 		
 		return str;

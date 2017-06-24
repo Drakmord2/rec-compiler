@@ -14,7 +14,7 @@ public class ComandoReturn extends Comando {
 	public String toString(int level) {
 		String str = this.getSpaces(level);
 		
-		str += "Comando\n";
+		str += "Comando-return\n";
 		str += E != null ? E.toString(level+1) : "";
 		
 		return str;

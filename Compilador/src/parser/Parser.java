@@ -75,7 +75,7 @@ public class Parser {
 		if (this.currentToken.getKind() == kind) {
 			this.acceptIt();
 		} else {
-			throw new SyntacticException("Expected " + kind + " but instead got: " + this.currentToken.getKind(),
+			throw new SyntacticException("Esperado: " + kind + " | verificado: " + this.currentToken.getKind(),
 					this.currentToken);
 		}
 	}
@@ -198,7 +198,7 @@ public class Parser {
 			
 			return new Function(I1, P, T, D, C, I2);
 		}else{
-			throw new SyntacticException("Unexpected token.", this.currentToken);
+			throw new SyntacticException("Token inexperado.", this.currentToken);
 		}
 
 	}
@@ -275,7 +275,7 @@ public class Parser {
 			
 			return new ComandoShow(E);
 		}else{
-			throw new SyntacticException("Unexpected token.", this.currentToken);
+			throw new SyntacticException("Token inexperado.", this.currentToken);
 		}
 	}
 
@@ -457,7 +457,7 @@ public class Parser {
 			
 			return new FatorLiteral(L);
 		}else{
-			throw new SyntacticException("Unexpected token.", this.currentToken);
+			throw new SyntacticException("Token inexperado.", this.currentToken);
 		}
 
 	}
@@ -472,7 +472,7 @@ public class Parser {
 			
 			return L;
 		}else{
-			throw new SyntacticException("Unexpected token.", this.currentToken);
+			throw new SyntacticException("Token inexperado.", this.currentToken);
 		}
 
 	}
@@ -496,7 +496,7 @@ public class Parser {
 			
 			return new LiteralBool(B);
 		}else{
-			throw new SyntacticException("Unexpected token.", this.currentToken);
+			throw new SyntacticException("Token inexperado.", this.currentToken);
 		}
 
 	}
@@ -514,7 +514,7 @@ public class Parser {
 			
 			return new Tipo(T); 
 		}else{
-			throw new SyntacticException("Unexpected token.", this.currentToken);
+			throw new SyntacticException("Token inexperado.", this.currentToken);
 		}
 
 	}

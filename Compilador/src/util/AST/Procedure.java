@@ -3,12 +3,14 @@ package util.AST;
 import java.util.ArrayList;
 
 import checker.SemanticException;
+import checker.Type;
 import checker.Visitor;
 
 public class Procedure extends CmdPrimario {
 
 	public ID I1;
 	public Parametro P;
+	public ArrayList<Type> tipoParams;
 	public ArrayList<DecVar> D;
 	public ArrayList<Comando> C;
 	public ID I2;
@@ -26,7 +28,7 @@ public class Procedure extends CmdPrimario {
 	public String toString(int level) {
 		String str = this.getSpaces(level);
 		
-		str += "Cmd-primario\n";
+		str += "Cmd-primario-procedure\n";
 		str += I1.toString(level+1);
 		str += P != null ? P.toString(level+1) : "";
 		
@@ -37,8 +39,6 @@ public class Procedure extends CmdPrimario {
 		for (Comando comando : C) {
 			str += comando.toString(level+1);
 		}
-		
-		str += I2.toString(level+1);
 		
 		return str;
 	}

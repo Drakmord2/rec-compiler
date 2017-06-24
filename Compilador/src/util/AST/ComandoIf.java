@@ -21,7 +21,7 @@ public class ComandoIf extends Comando {
 	public String toString(int level) {
 		String str = this.getSpaces(level);
 		
-		str += "Comando\n";
+		str += "Comando-if\n";
 		str += E.toString(level+1);
 		
 		for (Comando comando : C1) {
