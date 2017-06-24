@@ -24,6 +24,8 @@ end fibonacci;
 procedure Main () is
 begin
     show fibonacci(num);
+    
+    return;
 end Main;
 ```
 You can find REC's context-free grammars written in an EBNF variant on [/docs](https://github.com/Drakmord2/rec-compiler/tree/develop/docs)
