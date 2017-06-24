@@ -27,7 +27,7 @@ public class Compiler {
 		
 		System.out.println("\nREC Compiler\nVersão 0.8 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
 		System.out.println("\nCompilando código-fonte [ " + file[file.length-1] + " ]\n");
-		System.out.println("----------------------------------------------------------");
+		System.out.println("-----------------------------------------------------------------------------------------");
 		
 		try {
 			Parser p 			= new Parser(location);
@@ -44,10 +44,10 @@ public class Compiler {
 				astRoot 	= c.check(astRoot);
 				
 				System.out.println("Análise Semantica - PASS\n");
-				System.out.println("----------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------------------------------");
 				System.out.println("\n\t-- AST Decorada --\n");
 				System.out.println( astRoot.toString(0));
-				System.out.println("----------------------------------------------------------\n");
+				System.out.println("-----------------------------------------------------------------------------------------");
 			}
 			
 		} catch (LexicalException e) {

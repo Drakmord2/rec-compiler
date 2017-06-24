@@ -91,7 +91,7 @@ public final class Checker implements Visitor {
 			throw new SemanticException("Fechamento incorreto do Procedimento [ "+id1+" ]");
 		}
 		
-		this.idTable.enter(proc.I1.spelling, proc.I1);
+		this.idTable.enter(proc.I1.spelling, proc);
 		
 		proc.I1.tipo = Type.empty;
 		proc.I1.visit(this, null);
@@ -141,7 +141,7 @@ public final class Checker implements Visitor {
 			throw new SemanticException("Fechamento incorreto da Função [ "+id1+" ]");
 		}
 
-		this.idTable.enter(func.I1.spelling, func.I1);
+		this.idTable.enter(func.I1.spelling, func);
 		func.I1.visit(this, null);
 
 		this.idTable.openScope();
@@ -261,7 +261,7 @@ public final class Checker implements Visitor {
 		
 		param.I.tipo 	 = tipo;
 		param.I.variavel = true;
-		this.idTable.enter(param.I.spelling, param.I);
+		this.idTable.enter(param.I.spelling, param);
 		
 		tipos.add(tipo);
 		if (param.P != null) {
@@ -290,12 +290,12 @@ public final class Checker implements Visitor {
 		
 		decVar.I1.tipo 		= tipo;
 		decVar.I1.variavel  = true;
-		this.idTable.enter(decVar.I1.spelling, decVar.I1);
+		this.idTable.enter(decVar.I1.spelling, decVar);
 		
 		for (ID id : decVar.I) {
 			id.tipo 	= tipo;
 			id.variavel = true;
-			this.idTable.enter(id.spelling, id);
+			this.idTable.enter(id.spelling, decVar);
 		}
 		
 		return null;
@@ -319,7 +319,7 @@ public final class Checker implements Visitor {
 			ArrayList<Type> tipoArgs;
 			tipoArgs = (ArrayList<Type>) chamada.A.visit(this, null);
 			
-			
+			this.checkArgumento(id, tipoArgs);
 		}
 		
 		if (chamada.At != null) {
@@ -460,6 +460,8 @@ public final class Checker implements Visitor {
 		if (fatorChm.A != null) {
 			ArrayList<Type> tipoArgs;
 			tipoArgs = (ArrayList<Type>) fatorChm.A.visit(this, null);
+			
+			this.checkArgumento(id, tipoArgs);
 		}
 		
 		if (fatorChm.At != null) {
@@ -516,7 +518,33 @@ public final class Checker implements Visitor {
 			throw new SemanticException("Identificador não declarado. [ "+id.spelling+" ]");
 		}
 		
-		return id.decl;
+		if (id.decl instanceof Procedure) {
+			return ((Procedure) id.decl).I1;
+		}
+		
+		if (id.decl instanceof Function) {
+			return ((Function) id.decl).I1;
+		}
+		
+		if (id.decl instanceof Parametro) {
+			return ((Parametro) id.decl).I;
+		}
+		
+		if (id.decl instanceof DecVar) {
+			DecVar decl = ((DecVar) id.decl);
+			
+			if (decl.I1.spelling.equals(id.spelling)) {
+				return decl.I1;
+			}
+			
+			for (ID i : decl.I) {
+				if (i.spelling.equals(id.spelling)) {
+					return i;
+				}
+			}
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -573,16 +601,51 @@ public final class Checker implements Visitor {
 		if (cmd instanceof ComandoReturn) {
 			Expressao exp = ((ComandoReturn) cmd).E;
 			
-			if (exp != null) {
-				if ( ! exp.tipo.equals(tipo) ) {
-					throw new SemanticException("Tipo de retorno incompatível. "
-							+ "Experado: [ "+tipo.toString()+" ] | Verificado: [ "+exp.tipo.toString()+" ]");
-				}
+			if (exp == null && ! tipo.equals(Type.empty)) {
+				throw new SemanticException("Tipo de retorno incompatível. "
+						+ "Esperado: [ "+tipo.toString()+" ] | Verificado: [ "+Type.empty.toString()+" ]");
+			}
+			
+			if (exp != null && ! exp.tipo.equals(tipo) ) {
+				throw new SemanticException("Tipo de retorno incompatível. "
+						+ "Esperado: [ "+tipo.toString()+" ] | Verificado: [ "+exp.tipo.toString()+" ]");
 			}
 			
 			return true;
 		}
 		return false;
+	}
+	
+	private void checkArgumento(ID id, ArrayList<Type> tipoArgs) throws SemanticException {
+		ArrayList<Type> tipoParams = new ArrayList<>();
+		String nome = "";
+		
+		if (id.decl instanceof Procedure) {
+			Procedure proc 	= ((Procedure) id.decl);
+			tipoParams 		= proc.tipoParams;
+			nome 			= proc.I1.spelling;
+		}
+		
+		if (id.decl instanceof Function) {
+			Function func 	= ((Function) id.decl);
+			tipoParams 		= func.tipoParams;
+			nome 			= func.I1.spelling;
+		}
+		
+		if (tipoArgs.size() != tipoParams.size()) {
+			throw new SemanticException("Número incorreto de argumentos em chamada de [ "+nome+" ].");
+		}
+		
+		for (int i = 0; i < tipoParams.size(); i++) {
+			Type t1 = tipoParams.get(i);
+			Type t2 = tipoArgs.get(i);
+			
+			if (! t1.equals(t2)) {
+				throw new SemanticException("Argumento de tipo inválido em chamada de [ "+nome+" ]. "
+						+ "\n            Esperado: [ "+t1.toString()+" ] | Verificado: [ "+t2.toString()+" ] ");
+			}
+		}
+		
 	}
 	
 }
