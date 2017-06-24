@@ -43,7 +43,9 @@ import checker.SemanticException;
 
 public final class Checker implements Visitor {
 	
-	public IdentificationTable idTable = null;
+	public IdentificationTable idTable 	= null;
+	public boolean returnScope 			= false;
+	public boolean whileScope 			= false;
 	
 	public Checker() {
 		this.idTable = new IdentificationTable();
@@ -215,9 +217,13 @@ public final class Checker implements Visitor {
 			throw new SemanticException("Expressão não booleana em comando WHILE.");
 		}
 		
+		this.whileScope = true;
+		
 		for (Comando cmd : cmdWhile.C) {
 			cmd.visit(this, null);
 		}
+		
+		this.whileScope = false;
 		return null;
 	}
 
@@ -356,7 +362,6 @@ public final class Checker implements Visitor {
 			return tipos;
 		}
 		
-		tipos.add(Type.empty);
 		return tipos;
 	}
 
@@ -592,7 +597,7 @@ public final class Checker implements Visitor {
 	}
 	
 	private void unconditional(Comando cmd) throws SemanticException {
-		if (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) {
+		if ( (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) && this.whileScope == false) {
 			throw new SemanticException("Uso inválido de [ break ] ou [ continue ].");
 		}
 	}
@@ -622,16 +627,22 @@ public final class Checker implements Visitor {
 		
 		if (id.decl instanceof Procedure) {
 			Procedure proc 	= ((Procedure) id.decl);
-			tipoParams 		= proc.tipoParams;
 			nome 			= proc.I1.spelling;
+			
+			if (proc.tipoParams != null) {
+				tipoParams.addAll(proc.tipoParams);
+			}
 		}
 		
 		if (id.decl instanceof Function) {
 			Function func 	= ((Function) id.decl);
-			tipoParams 		= func.tipoParams;
 			nome 			= func.I1.spelling;
+
+			if (func.tipoParams != null) {
+				tipoParams.addAll(func.tipoParams);
+			}
 		}
-		
+
 		if (tipoArgs.size() != tipoParams.size()) {
 			throw new SemanticException("Número incorreto de argumentos em chamada de [ "+nome+" ].");
 		}
