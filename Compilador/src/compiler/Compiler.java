@@ -62,7 +62,7 @@ public class Compiler {
 	public static String validateInput(String[] arg) throws Exception {
 		if (arg.length == 0) {
  			String erro = "\n\n------------------- INPUT ERROR - BEGIN -------------------------\n"
-					+ "\nPath do codigo-fonte é inválido\n"
+					+ "\n>> Message: Path do codigo-fonte é inválido\n"
 					+ "\n------------------- INPUT ERROR - END ---------------------------\n";
 			
 			throw new Exception(erro);
