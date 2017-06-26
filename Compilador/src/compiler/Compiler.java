@@ -28,21 +28,17 @@ public class Compiler {
 		String[] file 	= location.split("/");
 		String out 		= location.split(".rec")[0];
 		
-		System.out.println("\nREC Compiler\nVersão 0.8 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
-		System.out.println("\nCompilando código-fonte [ " + file[file.length-1] + " ]\n");
-		System.out.println("-----------------------------------------------------------------------------------------");
+		Compiler.printHeader(file);
 		
 		try {
 			Parser p 			= new Parser(location);
 			Programa astRoot 	= null;
-			
-			astRoot = p.parse();
+			astRoot 			= p.parse();
 			
 			System.out.println("\nAnálise Lexica    - PASS");
 			System.out.println("Análise Sintatica - PASS");
 			
 			if ( astRoot != null ) {
-			    
 				Checker c	= new Checker();
 				astRoot 	= c.check(astRoot);
 				
@@ -50,19 +46,12 @@ public class Compiler {
 
 				out 		= out+".asm";
 				Encoder e 	= new Encoder(astRoot, location, out);
-				
 				e.encode();
 				
-				System.out.println("Gerador de Código - PASS\n");
-				System.out.println("-----------------------------------------------------------------------------------------");
-				System.out.println("\n\t-- AST Decorada --\n");
-				System.out.println( astRoot.toString(0));
-				System.out.println("-----------------------------------------------------------------------------------------\n");
-				System.out.println("Código Assembly (NASM) criado em [ "+out+" ]\n");
-				System.out.println("-----------------------------------------------------------------------------------------\n");
-			}
-
-		} catch (LexicalException e) {
+				Compiler.printBody(astRoot, out);
+			}	
+		} 
+		catch (LexicalException e) {
 			System.out.println(e.toString());
 		} catch (SyntacticException e) {
 			System.out.println(e.toString());
@@ -97,4 +86,19 @@ public class Compiler {
 		return location;
 	}
 	
+	public static void printHeader(String[] file) {
+		System.out.println("\nREC Compiler\nVersão 0.8 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
+		System.out.println("\nCompilando código-fonte [ " + file[file.length-1] + " ]\n");
+		System.out.println("-----------------------------------------------------------------------------------------");
+	}
+	
+	public static void printBody(Programa astRoot, String out) {
+		System.out.println("Gerador de Código - PASS\n");
+		System.out.println("-----------------------------------------------------------------------------------------");
+		System.out.println("\n\t-- AST Decorada --\n");
+		System.out.println( astRoot.toString(0));
+		System.out.println("-----------------------------------------------------------------------------------------\n");
+		System.out.println("Código Assembly (NASM) criado em [ "+out+" ]\n");
+		System.out.println("-----------------------------------------------------------------------------------------\n");
+	}
 }
