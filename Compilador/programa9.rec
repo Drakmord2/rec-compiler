@@ -1,7 +1,7 @@
 
-global HelloWorld, id, x : Boolean := True;
+global HelloWorld: Integer := 1;
 
-procedure Main(x : Integer, y : Boolean) is
+procedure Main() is
 begin
 	show HelloWorld;
 	return;

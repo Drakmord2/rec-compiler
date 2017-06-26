@@ -52,9 +52,10 @@ public class Arquivo {
     *
     * @param in     nome do arquivo de entrada de dados
     * @param out    nome do arquivo de sa�da de dados
+    * @throws InputException 
     *
     */
-    public Arquivo(String in, String out) {
+    public Arquivo(String in, String out) throws InputException {
         try {
             // abre o arquivo de entrada no modo leitura
             this.in = new BufferedReader(new FileReader(in));
@@ -65,7 +66,9 @@ public class Arquivo {
             this.initBuffer();
 
         } catch (IOException e) {
-            throw new RuntimeException(e.toString());
+ 			String erro = "Path do código-fonte ou código-alvo é inválido";
+ 			
+			throw new InputException(erro);
         }
     }
     
@@ -79,7 +82,7 @@ public class Arquivo {
      * @throws Exception 
      *
      */
-     public Arquivo(String in) throws Exception {
+     public Arquivo(String in) throws InputException {
          try {
              // abre o arquivo de entrada no modo leitura
              this.in = new BufferedReader(new FileReader(in));
@@ -90,11 +93,9 @@ public class Arquivo {
              this.initBuffer();
 
          } catch (IOException e) {
- 			String erro = "\n\n------------------- INPUT ERROR - BEGIN -------------------------\n"
-					+ "\nPath do codigo-fonte é inválido\n"
-					+ "\n------------------- INPUT ERROR - END ---------------------------\n";
-			
-			throw new Exception(erro);
+ 			String erro = "Path do codigo-fonte é inválido";
+ 			
+			throw new InputException(erro);
          }
      }    
 

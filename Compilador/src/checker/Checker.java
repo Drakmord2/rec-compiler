@@ -351,8 +351,6 @@ public final class Checker implements Visitor {
 				Type tipo2 = (Type) exp.visit(this, null);
 				tipos.add(tipo2);
 			}
-			
-			return tipos;
 		}
 		
 		return tipos;

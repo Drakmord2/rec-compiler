@@ -2,9 +2,11 @@ package compiler;
 
 import checker.Checker;
 import checker.SemanticException;
+import encoder.Encoder;
 import parser.Parser;
 import parser.SyntacticException;
 import scanner.LexicalException;
+import util.InputException;
 import util.AST.Programa;
 
 /**
@@ -24,6 +26,7 @@ public class Compiler {
 	public static void main(String[] args) throws Exception {
 		String location = Compiler.validateInput(args);
 		String[] file 	= location.split("/");
+		String out 		= location.split(".rec")[0];
 		
 		System.out.println("\nREC Compiler\nVersão 0.8 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
 		System.out.println("\nCompilando código-fonte [ " + file[file.length-1] + " ]\n");
@@ -43,32 +46,55 @@ public class Compiler {
 				Checker c	= new Checker();
 				astRoot 	= c.check(astRoot);
 				
-				System.out.println("Análise Semantica - PASS\n");
+				System.out.println("Análise Semantica - PASS");
+
+				out 		= out+".asm";
+				Encoder e 	= new Encoder(astRoot, location, out);
+				
+				e.encode();
+				
+				System.out.println("Gerador de Código - PASS\n");
 				System.out.println("-----------------------------------------------------------------------------------------");
 				System.out.println("\n\t-- AST Decorada --\n");
 				System.out.println( astRoot.toString(0));
 				System.out.println("-----------------------------------------------------------------------------------------\n");
+				System.out.println("Código Assembly (NASM) criado em [ "+out+" ]\n");
+				System.out.println("-----------------------------------------------------------------------------------------\n");
 			}
-			
+
 		} catch (LexicalException e) {
 			System.out.println(e.toString());
 		} catch (SyntacticException e) {
 			System.out.println(e.toString());
 		} catch (SemanticException e) {
 			System.out.println(e.toString());
+		} catch (InputException e) {
+			System.out.println(e.toString());
 		}
 	}
 	
-	public static String validateInput(String[] arg) throws Exception {
+	public static String validateInput(String[] arg) throws InputException {
 		if (arg.length == 0) {
- 			String erro = "\n\n------------------- INPUT ERROR - BEGIN -------------------------\n"
-					+ "\n>> Message: Path do codigo-fonte é inválido\n"
-					+ "\n------------------- INPUT ERROR - END ---------------------------\n";
+ 			String message = "Path do codigo-fonte é inválido";
 			
-			throw new Exception(erro);
+			throw new InputException(message);
 		}
 		
-		return arg[0];
+		String location = arg[0];
+		String[] ext 	= location.split("[.]");
+		int i 			= ext.length;
+		
+		try {
+			if (! ext[i-1].equals("rec")) {
+				String message = "Código-fonte não é da linguagem REC.";
+				throw new InputException(message);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			String message = "Código-fonte não é da linguagem REC.";
+			throw new InputException(message);
+		}
+		
+		return location;
 	}
 	
 }
