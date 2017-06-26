@@ -288,19 +288,15 @@ public final class Checker implements Visitor {
 	public Object visitDecVar(DecVar decVar, Object arg) throws SemanticException {
 		Type tipo = (Type) decVar.T.visit(this, null);
 		
-		if (decVar.A != null) {
-			Type tipoAt = (Type) decVar.A.visit(this, null);
-			
-			if (! tipo.equals(tipoAt)) {
-				String var 		= decVar.I1 != null ? decVar.I1.spelling : "";
-				String tipoStr 	= tipo != null ? tipo.toString() : "";
-				throw new SemanticException("Atribuição com tipo incompatíveis. Var: "+var+" | Tipo: "+tipoStr);
-			}
-		}
-		
 		decVar.I1.tipo 		= tipo;
 		decVar.I1.variavel  = true;
 		this.idTable.enter(decVar.I1.spelling, decVar);
+		
+		if (decVar.A != null) {
+			Type tipo2 = (Type) decVar.A.visit(this, null);
+			
+			this.checkAtribuicao(decVar.I1, tipo, tipo2);
+		}
 		
 		for (ID id : decVar.I) {
 			id.tipo 	= tipo;
@@ -355,8 +351,6 @@ public final class Checker implements Visitor {
 				Type tipo2 = (Type) exp.visit(this, null);
 				tipos.add(tipo2);
 			}
-			
-			return tipos;
 		}
 		
 		return tipos;
@@ -364,76 +358,61 @@ public final class Checker implements Visitor {
 
 	@Override
 	public Object visitExpressao(Expressao exp, Object arg) throws SemanticException {
-		Type tipoExp = (Type) exp.E1.visit(this, null);
+		Type tipo1 = (Type) exp.E1.visit(this, null);
 		
 		if (exp.E2 != null) {
 			exp.O.visit(this, null);
-			Type tipoExp2 = (Type) exp.E2.visit(this, null);
+			Type tipo2 = (Type) exp.E2.visit(this, null);
 			
-			String tipo1 = tipoExp.toString();
-			String tipo2 = tipoExp2.toString();
+			this.checkExpressao(tipo1, tipo2);
 			
-			if (! tipo1.equals(tipo2)) {
-				throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipo1+" ] - [ "+tipo2+" ]");
-			}
-			
-			if (! exp.O.spelling.equals("=") && ! exp.O.spelling.equals("/=") && ( ! tipoExp.equals(Type.integer) || ! tipoExp2.equals(Type.integer)) ) {
+			if (! exp.O.spelling.equals("=") && ! exp.O.spelling.equals("/=") && ( ! tipo1.equals(Type.integer) || ! tipo2.equals(Type.integer)) ) {
 				throw new SemanticException("Tipos de operandos incompatíveis para operador [ "+exp.O.spelling+" ]");
 			}
 			
-			tipoExp = Type.bool;
+			tipo1 = Type.bool;
 		}
 		
-        exp.tipo = tipoExp;
-		return tipoExp;
+        exp.tipo = tipo1;
+		return tipo1;
 	}
 
 	@Override
 	public Object visitExpressaoArit(ExpressaoArit expArit, Object arg) throws SemanticException {
-		Type tipoExp = (Type) expArit.T1.visit(this, null);
-		String tipo1 = tipoExp.toString();
+		Type tipo1 = (Type) expArit.T1.visit(this, null);
 		
 		if (expArit.T2 != null) {
 			int size = expArit.T2.size();
 			
 			for (int i = 0; i < size; i++) {
 				expArit.O.get(i).visit(this, null);
+				Type tipo2 = (Type) expArit.T2.get(i).visit(this, null);
 				
-				Type tipoExp2 = (Type) expArit.T2.get(i).visit(this, null);
-				String tipo2  = tipoExp2.toString();
-				
-				if (! tipo1.equals(tipo2) && (tipoExp.equals(Type.bool) || tipoExp2.equals(Type.bool)) ) {
-					throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipo1+" ] - [ "+tipo2+" ]");
-				}
+				this.checkExpressao(tipo1, tipo2);
 			}
 		}
 		
-		expArit.tipo = tipoExp;
-		return tipoExp;
+		expArit.tipo = tipo1;
+		return tipo1;
 	}
 
 	@Override
 	public Object visitTermo(Termo termo, Object arg) throws SemanticException {
-		Type tipoTermo = (Type) termo.F1.visit(this, null);
-		String tipo1   = tipoTermo.toString();
+		Type tipo1 = (Type) termo.F1.visit(this, null);
 		
 		if (termo.F2 != null) {
 			int size = termo.F2.size();
 			
 			for (int i = 0; i < size; i++) {
 				termo.O.get(i).visit(this, null);
+				Type tipo2 = (Type) termo.F2.get(i).visit(this, null);
 				
-				Type tipoTermo2 = (Type) termo.F2.get(i).visit(this, null);
-				String tipo2    = tipoTermo2.toString();
-				
-				if (! tipo1.equals(tipo2) && (tipoTermo.equals(Type.bool) || tipoTermo2.equals(Type.bool)) ) {
-					throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipo1+" ] - [ "+tipo2+" ]");
-				}
+				this.checkExpressao(tipo1, tipo2);
 			}
 		}
 		
-		termo.tipo = tipoTermo;
-		return tipoTermo;
+		termo.tipo = tipo1;
+		return tipo1;
 	}
 
 	@Override
@@ -587,6 +566,12 @@ public final class Checker implements Visitor {
 		return opLog.decl;
 	}
 	
+	private void checkExpressao(Type tipo1, Type tipo2) throws SemanticException {
+		if (! tipo1.equals(tipo2) && (tipo1.equals(Type.bool) || tipo2.equals(Type.bool)) ) {
+			throw new SemanticException("Tipos de operandos incompatíveis. [ "+tipo1.toString()+" ] - [ "+tipo2.toString()+" ]");
+		}
+	}
+	
 	private void unconditional(Comando cmd) throws SemanticException {
 		if ( (cmd instanceof ComandoBreak || cmd instanceof ComandoContinue) && this.whileScope == 0) {
 			throw new SemanticException("Uso inválido de [ break ] ou [ continue ].");
@@ -617,6 +602,7 @@ public final class Checker implements Visitor {
 		if (! tipo.equals(tipo2)) {
 			String var 		= id != null ? id.spelling : "";
 			String tipoStr 	= tipo != null ? tipo.toString() : "";
+			
 			throw new SemanticException("Atribuição com tipo incompatíveis. Var: "+var+" | Tipo: "+tipoStr);
 		}
 		
