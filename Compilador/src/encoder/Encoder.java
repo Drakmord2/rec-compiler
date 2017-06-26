@@ -13,8 +13,8 @@ public class Encoder {
 	}
 	
 	public void encode() {
-		String data = "\nSECTION .data";
-		String bss  = "SECTION .bss";
+		String data = "\nSECTION .data\n";
+		String bss  = "SECTION .bss\n";
 		String text = "SECTION .text\n    _main:\n";
 		
 		String out = data+"\n"+bss+"\n"+text+"\n";
