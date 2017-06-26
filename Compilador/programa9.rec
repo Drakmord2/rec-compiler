@@ -1,5 +1,5 @@
 
-global HelloWorld : Boolean := True;
+global HelloWorld, id, x : Boolean := True;
 
 procedure Main(x : Integer, y : Boolean) is
 begin
