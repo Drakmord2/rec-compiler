@@ -24,13 +24,13 @@ public class Compiler {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		String location = Compiler.validateInput(args);
-		String[] file 	= location.split("/");
-		String out 		= location.split(".rec")[0];
-		
-		Compiler.printHeader(file);
-		
 		try {
+			String location = Compiler.validateInput(args);
+			String[] file 	= location.split("/");
+			String out 		= location.split(".rec")[0];
+			
+			Compiler.printHeader(file);
+		
 			Parser p 			= new Parser(location);
 			Programa astRoot 	= null;
 			astRoot 			= p.parse();
