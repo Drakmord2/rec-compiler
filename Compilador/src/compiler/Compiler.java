@@ -6,7 +6,7 @@ import encoder.Encoder;
 import parser.Parser;
 import parser.SyntacticException;
 import scanner.LexicalException;
-import util.InputException;
+import util.FileException;
 import util.AST.Programa;
 
 /**
@@ -57,16 +57,16 @@ public class Compiler {
 			System.out.println(e.toString());
 		} catch (SemanticException e) {
 			System.out.println(e.toString());
-		} catch (InputException e) {
+		} catch (FileException e) {
 			System.out.println(e.toString());
 		}
 	}
 	
-	public static String validateInput(String[] arg) throws InputException {
+	public static String validateInput(String[] arg) throws FileException {
 		if (arg.length == 0) {
  			String message = "Path do codigo-fonte é inválido";
 			
-			throw new InputException(message);
+			throw new FileException(message);
 		}
 		
 		String location = arg[0];
@@ -76,11 +76,11 @@ public class Compiler {
 		try {
 			if (! ext[i-1].equals("rec")) {
 				String message = "Código-fonte não é da linguagem REC.";
-				throw new InputException(message);
+				throw new FileException(message);
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			String message = "Código-fonte não é da linguagem REC.";
-			throw new InputException(message);
+			throw new FileException(message);
 		}
 		
 		return location;

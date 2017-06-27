@@ -8,7 +8,6 @@ package util;
 
 import java.io.*;
 
-
 /**
  * Classe que manipula a entrada e sa�da de dados de um programa atrav�s de
  * arquivos.<br> <br>
@@ -52,10 +51,10 @@ public class Arquivo {
     *
     * @param in     nome do arquivo de entrada de dados
     * @param out    nome do arquivo de sa�da de dados
-    * @throws InputException 
+    * @throws FileException 
     *
     */
-    public Arquivo(String in, String out) throws InputException {
+    public Arquivo(String in, String out) throws FileException {
         try {
             // abre o arquivo de entrada no modo leitura
             this.in = new BufferedReader(new FileReader(in));
@@ -68,7 +67,7 @@ public class Arquivo {
         } catch (IOException e) {
  			String erro = "Path do código-fonte ou código-alvo é inválido";
  			
-			throw new InputException(erro);
+			throw new FileException(erro);
         }
     }
     
@@ -82,7 +81,7 @@ public class Arquivo {
      * @throws Exception 
      *
      */
-     public Arquivo(String in) throws InputException {
+     public Arquivo(String in) throws FileException {
          try {
              // abre o arquivo de entrada no modo leitura
              this.in = new BufferedReader(new FileReader(in));
@@ -95,7 +94,7 @@ public class Arquivo {
          } catch (IOException e) {
  			String erro = "Path do codigo-fonte é inválido";
  			
-			throw new InputException(erro);
+			throw new FileException(erro);
          }
      }    
 
