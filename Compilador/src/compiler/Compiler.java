@@ -87,7 +87,7 @@ public class Compiler {
 	}
 	
 	public static void printHeader(String[] file) {
-		System.out.println("\nREC Compiler\nVersão 0.8 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
+		System.out.println("\nREC Compiler\nVersão 0.9 - 2017\nRubens Carneiro - rec2@ecomp.poli.br");
 		System.out.println("\nCompilando código-fonte [ " + file[file.length-1] + " ]\n");
 		System.out.println("-----------------------------------------------------------------------------------------");
 	}
