@@ -599,16 +599,17 @@ public final class Checker implements Visitor {
 	}
 	
 	private void checkAtribuicao(ID id, Type tipo, Type tipo2) throws SemanticException {
+		if (! id.variavel) {
+			throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
+		}
+		
 		if (! tipo.equals(tipo2)) {
 			String var 		= id != null ? id.spelling : "";
 			String tipoStr 	= tipo != null ? tipo.toString() : "";
 			
 			throw new SemanticException("Atribuição com tipo incompatíveis. Var: "+var+" | Tipo: "+tipoStr);
 		}
-		
-		if (! id.variavel) {
-			throw new SemanticException("Atribuição inválida. [ "+id.spelling+" ] não é variável.");
-		}	
+			
 	}
 	
 	private void checkArgumento(ID id, ArrayList<Type> tipoArgs) throws SemanticException {
